@@ -24,6 +24,9 @@ function M.setup(p, o)
   local ucurl = o.undercurl or nil
   local inverse = o.inverse or nil
 
+  --- monoglow's `glow`: the accent stops being rationed
+  local glow = o.glow or nil
+
   local bg = o.transparent and none or p.bg
   local bg_float = o.transparent and none or p.bg_float
 
@@ -43,6 +46,11 @@ function M.setup(p, o)
       return { fg = color, bg = bg, reverse = true }
     end
     return { fg = p.bg, bg = color }
+  end
+
+  --- a lit block, the way monoglow draws its selection and incremental search
+  local function lit(color)
+    return { fg = p.bg, bg = color, bold = bold }
   end
 
   local groups = {
@@ -92,14 +100,14 @@ function M.setup(p, o)
     Whitespace = { fg = p.line_nr },
     SpecialKey = { fg = p.comment },
 
-    Search = invert(p.mint),
-    IncSearch = vim.tbl_extend('force', invert(p.mint_hi), { bold = bold }),
+    Search = glow and { fg = p.mint, bold = bold } or invert(p.mint),
+    IncSearch = glow and lit(p.mint) or vim.tbl_extend('force', invert(p.mint_hi), { bold = bold }),
     CurSearch = { link = 'IncSearch' },
     Substitute = { link = 'IncSearch' },
     QuickFixLine = { bg = p.bg_sel, bold = bold },
 
     Pmenu = { fg = p.fg, bg = p.bg_pmenu },
-    PmenuSel = { fg = p.mint_hi, bg = p.bg_sel, bold = bold },
+    PmenuSel = glow and lit(p.mint) or { fg = p.mint_hi, bg = p.bg_sel, bold = bold },
     PmenuKind = { fg = p.comment, bg = p.bg_pmenu, bold = bold },
     PmenuKindSel = { fg = p.comment, bg = p.bg_sel, bold = bold },
     PmenuExtra = { fg = p.comment, bg = p.bg_pmenu },
@@ -155,7 +163,7 @@ function M.setup(p, o)
     Boolean = { link = 'Constant' },
     Float = { link = 'Constant' },
 
-    Identifier = { fg = p.fg },
+    Identifier = { fg = p.fg, bold = glow and bold or nil },
     Function = { fg = p.fg, bold = bold },
 
     Statement = { fg = p.fg, bold = bold, italic = it_keyword },
@@ -164,7 +172,7 @@ function M.setup(p, o)
     Label = { link = 'Statement' },
     Keyword = { link = 'Statement' },
     Exception = { link = 'Statement' },
-    Operator = { fg = p.fg },
+    Operator = glow and { fg = p.mint, bold = bold } or { fg = p.fg },
 
     PreProc = { fg = p.fg_dim },
     Include = { link = 'PreProc' },

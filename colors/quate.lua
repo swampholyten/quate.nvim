@@ -2,6 +2,6 @@
 --
 --   :colorscheme quate
 --
--- Honours `background`; call require('quate').setup{} first to change options.
+-- Dark only. Call require('quate').setup{} first to change options.
 
 require('quate').load()

@@ -26,6 +26,12 @@ local defaults = {
   --- gruvbox `g:gruvbox_inverse` -- reverse video for Search/Error/Todo
   inverse = true,
 
+  --- monoglow's `glow`. Stops rationing the accent: swaps the soft mint for
+  --- monoglow's electric one, hands it to operators, bolds identifiers along
+  --- with the functions and keywords, and lights search and the completion
+  --- selection as a solid block instead of reverse video.
+  glow = false,
+
   --- clear the background of Normal & friends
   transparent = false,
   --- dim unfocused windows

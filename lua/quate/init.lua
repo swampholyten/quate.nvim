@@ -71,6 +71,16 @@ end
 function M.load(opts)
   local o = opts and config.setup(opts) or config.options
 
+  -- Dark only. If something flipped 'background', come back once the option
+  -- handler has finished -- setting it inline leaves Neovim on its own light
+  -- defaults with `colors_name` cleared.
+  if vim.o.background ~= 'dark' then
+    vim.schedule(function()
+      vim.cmd.colorscheme('quate')
+    end)
+  end
+  vim.o.background = 'dark'
+
   if vim.g.colors_name then
     vim.cmd('highlight clear')
   end
@@ -79,7 +89,7 @@ function M.load(opts)
   end
   vim.g.colors_name = 'quate'
 
-  local palette = require('quate.palette').get(vim.o.background)
+  local palette = require('quate.palette').get(o)
   local groups = require('quate.highlights').setup(palette, o)
 
   for group, spec in pairs(o.overrides or {}) do
@@ -103,11 +113,10 @@ function M.load(opts)
   end
 end
 
---- The palette for the current (or given) background, for statuslines and such.
----@param background string|nil
+--- The palette, for statuslines and such. Reflects the current `glow` setting.
 ---@return table
-function M.palette(background)
-  return require('quate.palette').get(background)
+function M.palette()
+  return require('quate.palette').get(config.options)
 end
 
 return M

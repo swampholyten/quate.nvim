@@ -14,7 +14,8 @@ There is exactly one hue in the whole theme.
 end }
 ```
 
-Dark and light are both supported; `:set background=light` reloads the scheme.
+Dark only — `background` is pinned to `dark`, and quate reasserts it if something
+flips it.
 
 ## The idea
 
@@ -43,11 +44,26 @@ genuinely asking for your eye:
 `CursorLineNr` · search and substitute · the completion selection and its fuzzy
 matches · `DiagnosticOk` · git additions · `ModeMsg` · list markers and `h1`.
 
-| | dark | light |
+| | quiet | `glow = true` |
 |---|---|---|
-| `mint_dim` | `#5faf87` | `#2f7f5f` |
-| `mint` | `#87d7af` | `#006b4b` |
-| `mint_hi` | `#afffd7` | `#005f3f` |
+| `mint_dim` | `#5faf87` | `#00d7af` |
+| `mint` | `#87d7af` | `#1bfd9c` |
+| `mint_hi` | `#afffd7` | `#87ffd7` |
+
+### `glow = true`
+
+Borrowed from [monoglow.nvim](https://github.com/wnkz/monoglow.nvim), whose own
+`glow` option bolds the callable things and hands its accent to the operators.
+Turning it on in quate stops rationing the mint:
+
+- the accent swaps to monoglow's electric `#1bfd9c` (its cterm fallback, 49, is
+  the mint `quiet` already reserved for `Todo`)
+- operators take the accent, and bold
+- identifiers join the bolded set, alongside functions and keywords
+- search and the completion selection become a lit block rather than reverse
+  video
+
+Off by default — quate's resting state is the quiet one.
 
 ### No second hue
 
@@ -80,6 +96,8 @@ require('quate').setup({
   underline = true,        -- g:gruvbox_underline
   undercurl = true,        -- g:gruvbox_undercurl
   inverse = true,          -- g:gruvbox_inverse; reverse video for Search/Error/Todo
+
+  glow = false,            -- monoglow's `glow`; see above
 
   transparent = false,     -- clear the background of Normal & friends
   dim_inactive = false,    -- dim unfocused windows
@@ -126,7 +144,8 @@ require('lualine').setup({ options = { theme = 'quate' } })
 The palette is available if you are building your own statusline:
 
 ```lua
-local p = require('quate').palette()  -- p.mint == { '#87d7af', 115 }
+local p = require('quate').palette()  -- p.mint == { '#87d7af', 115 }, or the
+                                      -- electric ramp when glow is on
 ```
 
 ## Credits
