@@ -44,26 +44,35 @@ genuinely asking for your eye:
 `CursorLineNr` · search and substitute · the completion selection and its fuzzy
 matches · `DiagnosticOk` · git additions · `ModeMsg` · list markers and `h1`.
 
-| | quiet | `glow = true` |
-|---|---|---|
-| `mint_dim` | `#5faf87` | `#00d7af` |
-| `mint` | `#87d7af` | `#1bfd9c` |
-| `mint_hi` | `#afffd7` | `#87ffd7` |
+How brightly it burns is the `glow` option, borrowed from
+[monoglow.nvim](https://github.com/wnkz/monoglow.nvim) — whose own `glow` bolds
+the callable things and hands its accent to the operators. It is **on by
+default**, and when it is on:
 
-### `glow = true`
-
-Borrowed from [monoglow.nvim](https://github.com/wnkz/monoglow.nvim), whose own
-`glow` option bolds the callable things and hands its accent to the operators.
-Turning it on in quate stops rationing the mint:
-
-- the accent swaps to monoglow's electric `#1bfd9c` (its cterm fallback, 49, is
-  the mint `quiet` already reserved for `Todo`)
+- the accent is monoglow's electric `#1bfd9c` (its cterm fallback, 49, is the
+  mint `quiet` already reserved for `Todo`)
 - operators take the accent, and bold
 - identifiers join the bolded set, alongside functions and keywords
 - search and the completion selection become a lit block rather than reverse
   video
 
-Off by default — quate's resting state is the quiet one.
+It takes a colour, not just a switch:
+
+```lua
+require('quate').setup({ glow = true })       -- monoglow's electric mint
+require('quate').setup({ glow = false })      -- the quiet mint, rationed
+require('quate').setup({ glow = '#ff8800' })  -- your own
+```
+
+Give it any `#rrggbb` and quate derives the dim and bright steps around it, then
+picks the nearest xterm-256 index for each so the terminal fallback still works.
+That one line recolours everything the accent touches — no `overrides` needed.
+
+| | `false` | `true` | `'#ff8800'` |
+|---|---|---|---|
+| `mint_dim` | `#5faf87` | `#00d7af` | `#b35f00` |
+| `mint` | `#87d7af` | `#1bfd9c` | `#ff8800` |
+| `mint_hi` | `#afffd7` | `#87ffd7` | `#ffbe73` |
 
 ### No second hue
 
@@ -97,7 +106,7 @@ require('quate').setup({
   undercurl = true,        -- g:gruvbox_undercurl
   inverse = true,          -- g:gruvbox_inverse; reverse video for Search/Error/Todo
 
-  glow = false,            -- monoglow's `glow`; see above
+  glow = true,             -- monoglow's `glow`; true | false | '#rrggbb'
 
   transparent = false,     -- clear the background of Normal & friends
   dim_inactive = false,    -- dim unfocused windows
@@ -133,19 +142,12 @@ Every grey sits on the xterm-256 colour cube and carries its `cterm` index, so
 the 256-colour fallback is exact rather than approximated. `termguicolors` is
 recommended but not required, and quate never sets it for you.
 
-## Extras
-
-`lualine` — a grey bar where the mode indicator is the only mint:
-
-```lua
-require('lualine').setup({ options = { theme = 'quate' } })
-```
-
-The palette is available if you are building your own statusline:
+The palette is available if you are building a statusline or want to reuse the
+greys:
 
 ```lua
-local p = require('quate').palette()  -- p.mint == { '#87d7af', 115 }, or the
-                                      -- electric ramp when glow is on
+local p = require('quate').palette()  -- p.mint == { '#1bfd9c', 49 }, following
+                                      -- whatever `glow` is set to
 ```
 
 ## Credits
