@@ -1,6 +1,6 @@
 # quate.nvim
 
-A quiet colorscheme for Neovim.
+A quiet colorscheme for Neovim, with a generated Vim build.
 
 Vim's built-in [`quiet`](https://github.com/vim/colorschemes) for the greys and
 the group structure, [gruvbox](https://github.com/morhetz/gruvbox) for the text
@@ -149,6 +149,36 @@ greys:
 local p = require('quate').palette()  -- p.mint == { '#1bfd9c', 49 }, following
                                       -- whatever `glow` is set to
 ```
+
+## Vim
+
+Vim cannot run the plugin: it will not source `colors/*.lua`, and its `+lua` has
+no `vim.api`, no `vim.o`, no `vim.tbl_*`. So the same tables are flattened, once,
+into plain `:highlight` commands in `colors/quate.vim`:
+
+```vim
+set rtp^=/path/to/quate.nvim   " or drop colors/quate.vim in ~/.vim/colors/
+set termguicolors              " optional; the 256-colour fallback is exact
+colorscheme quate
+```
+
+Neovim is untouched — the file hands straight back to the Lua path under
+`has('nvim')`, whichever extension your runtime picks up first.
+
+The Vim build is a subset, since Vim has neither half of what it drops:
+
+- **options are frozen at the defaults** (`glow = true` included). To change
+  them, edit `OPTS` in `scripts/gen_vim.lua` and re-run
+  `nvim -l scripts/gen_vim.lua > colors/quate.vim`. `overrides` and
+  `on_highlights` have no Vim equivalent; add your own `:highlight` lines after
+  `colorscheme quate`.
+- **no `@...` groups** — treesitter captures and LSP semantic tokens are
+  Neovim's, and Vim rejects the names outright. Groups that linked into that
+  namespace (`markdownH1` and friends) are resolved to concrete colours instead.
+  Vim's own syntax groups all carry their full spec.
+
+Vim 8.2.3236+ for `underdotted`/`underdashed`/`strikethrough`; earlier Vims will
+warn on the spell and diagnostic underlines and use plain `underline` elsewhere.
 
 ## Credits
 
